@@ -31,3 +31,64 @@ void loop() {
   
   delay(1000);
 }
+
+
+//
+
+from influxdb_client import InfluxDBClient
+import time
+import serial
+
+influxdb_url = "http://localhost:8086"
+influxdb_token = "NDKViRCI3oXkTUDuUQQGkH9lIDV9kEMWPHR47Ll4W9TjgNjVi85f71pcYDre2j3BM1s4C1g_8f55kKkryzg-6A=="
+influxdb_org = "test"
+influxdb_bucket = "dust"
+
+serial_port = "COM15"
+baudrate = 9600
+timeout = 2
+
+client = InfluxDBClient(url=influxdb_url, token=influxdb_token, org=influxdb_org)
+
+write_api = client.write_api()
+
+try:
+    ser = serial.Serial(serial_port, baudrate, timeout=timeout)
+    print(f"Connected to {serial_port} at {baudrate} baud")
+except serial.SerialException:
+    print("Failed to connect to serial port.")
+    exit()
+
+try:
+    while True:
+        if ser.in_waiting > 0:
+            line = ser.readline().decode('utf-8').strip()
+            print(f"Received: {line}")
+
+            if "=" in line:
+                key,value = line.split("=")
+                try:
+                    value = float(value)
+                    data = f"sensor_data.device=arduino {key}={value}"
+                    write_api.write(bucket=influxdb_bucket, record=data)
+                    print(f"Data written to influxDB: {key}={value}")
+
+                except ValueError:
+                    print("invalid data format")
+
+            time.sleep(1)
+
+except KeyboardInterrupt:
+    print("Stopping data collection...")
+finally:
+    ser.close()
+
+
+
+  // cmd  //
+명령 프롬프트 열고 파이썬 모듈 설치
+
+C:\Users\PC\AppData\Local\Programs\Python\Python313>
+pip3 install influxdb-client
+pip3 install influxdb
+pip3 install pyserial
