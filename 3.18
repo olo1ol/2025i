@@ -92,3 +92,9 @@ C:\Users\PC\AppData\Local\Programs\Python\Python313>
 pip3 install influxdb-client
 pip3 install influxdb
 pip3 install pyserial
+
+
+
+
+influxdb 에서 로그인  >>
+data explorer
