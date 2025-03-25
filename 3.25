@@ -53,3 +53,10 @@ void loop()
   Serial.println("Scan Complete! Retrying in 5 seconds...\n");
   delay(5000);	//5초 후 다시 검색
 }
+
+
+
+
+
+
+https://github.com/johnrickman/LiquidCrystal_I2C
